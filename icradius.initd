@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# radiusd	Start/Stop Radius daemon.
+#
+# chkconfig: 345 98 10
+#
+# description:	Remote Authentication Dail In User Service
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+case "$1" in
+  start)
+	show Starting RADIUSD server
+	daemon radiusd -y
+	touch /var/lock/subsys/radiusd
+	;;
+  stop)
+	show Stopping RADIUSD server
+	killproc radiusd
+	rm -f /var/lock/subsys/radiusd
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit 0
