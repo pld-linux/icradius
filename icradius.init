@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# radiusd	Start/Stop Radius daemon.
+#
+# chkconfig: 345 98 10
+#
+# description:	Remote Authentication Dail In User Service
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+case "$1" in
+  start)
+   # Check if the service is already running?
+   if [ ! -f /var/lock/subsys/radiusd ]; then
+      msg_starting ICRADIUS
+      daemon radiusd -y
+      touch /var/lock/subsys/radiusd
+   else
+      msg_Already_Running radiusd
+      exit 1
+   fi
+	;;
+  status)
+      	if [ -f /var/lock/subsys/radiusd ]; then
+		echo ICRADIUS is working on pids `pidof radiusd`
+	else
+		echo /var/lock/subsys/radiusd does not exist
+	fi
+	;;
+  stop)
+	msg_stopping ICRADIUS
+	killproc radiusd
+	rm -f /var/lock/subsys/radiusd
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+        echo "Usage: $0 {start|status|stop|restart}"
+        exit 1
+esac
+
+exit 0
