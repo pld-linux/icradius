@@ -140,13 +140,23 @@ gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
 
 %post
 touch /var/log/rad{u,w}tmp
-NAME=radius; DESC="radius daemon.
-Don't forget to read
-	%{_docdir}/%{name}-%{version}/QUICKSTART.txt.gz
-if you fing problems with running daemon"; %chkconfig_add
+/sbin/chkconfig --add radius
+if [ -r /var/lock/subsys/radiusd ]; then
+	/etc/rc.d/init.d/radius restart >&2
+else
+	echo "Run \"/etc/rc.d/init.d/radius start\" to start radius daemon."
+	echo "Don't forget to read"
+	echo "	%{_docdir}/%{name}-%{version}/QUICKSTART.txt.gz"
+	echo "if you find problems with running daemon"
+fi
 
 %preun
-NAME=radius; %chkconfig_del
+if [ "$1" = "0" ]; then
+	if [ -r /var/lock/subsys/radiusd ]; then
+		/etc/rc.d/init.d/radius stop >&2
+	FI
+	/sbin/chkconfig --del radius
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
