@@ -112,7 +112,8 @@ gzip -9nf {COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston} \
 	doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul} \
 	doc/QUICKSTART.txt
 
-:> $RPM_BUILD_ROOT/var/log/rad{u,w}tmp
+:> $RPM_BUILD_ROOT/var/log/radutmp
+:> $RPM_BUILD_ROOT/var/log/radwtmp
 :> $RPM_BUILD_ROOT/var/log/radius.log
 
 %post
