@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	6
+Release:	7
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -23,17 +23,22 @@ URL:		http://radius.innercite.com/
 Requires:	perl-Authen-Radius >= 0.05
 Requires:	perl >= 5.6.0
 Requires:	mysql
+Prereq:		/sbin/chkconfig
 BuildRequires:	mysql-devel
 BuildRequires:	pam-devel
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	radius
 Obsoletes:	radius
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 RADIUS server with MySQL backend based on Cistron Radius.
 
+%description -l pl
+Serwer RADIUS z backendem MySQL bazowanym na Cistron Radius.
+
 %package cgi
-Summary:	ICRADIUS web interface.
+Summary:	ICRADIUS web interface
+Summary(pl):	Interfejs WWW do ICRADIUS
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
@@ -43,8 +48,12 @@ Requires:	httpd
 %description cgi
 ICRADIUS web interface.
 
+%description cgi -l pl
+Interfejs WWW do ICRADIUS.
+
 %package perl
 Summary:	ICRADIUS perl scripts
+Summary(pl):	Skrypty perlowe ICRADIUS
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
@@ -55,10 +64,14 @@ Requires:	perl-Authen-Radius >= 0.05
 BuildRequires:	rpm-perlprov
 
 %description perl
-ICRADIUS perl scripts
+ICRADIUS perl scripts.
+
+%description perl -l pl
+Skrypty perlowe ICRADIUS.
 
 %package dictionaries
 Summary:	RADIUS dictionaries
+Summary(pl):	S³owniki RADIUS
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
@@ -66,6 +79,9 @@ Requires:	%{name} = %{version}
 
 %description dictionaries
 RADIUS dictionaries.
+
+%description dictionaries -l pl
+S³owniki RADIUS.
 
 %prep
 %setup -q
@@ -138,6 +154,9 @@ gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
 :> $RPM_BUILD_ROOT/var/log/radwtmp
 :> $RPM_BUILD_ROOT/var/log/radius.log
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 touch /var/log/rad{u,w}tmp
 /sbin/chkconfig --add radius
@@ -154,12 +173,9 @@ fi
 if [ "$1" = "0" ]; then
 	if [ -r /var/lock/subsys/radiusd ]; then
 		/etc/rc.d/init.d/radius stop >&2
-	FI
+	fi
 	/sbin/chkconfig --del radius
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
