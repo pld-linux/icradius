@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.18.1
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/icradius/%{name}-%{version}.tar.gz
@@ -43,8 +43,8 @@ Serwer RADIUS z backendem MySQL bazowanym na Cistron Radius.
 Summary:	ICRADIUS web interface
 Summary(pl):	Interfejs WWW do ICRADIUS
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
-Requires:	%{name}-perl = %{version}
+Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-perl = %{version}-%{release}
 Requires:	perl-IC-Radius
 Requires:	webserver
 
@@ -58,7 +58,7 @@ Interfejs WWW do ICRADIUS.
 Summary:	ICRADIUS perl scripts
 Summary(pl):	Skrypty perlowe ICRADIUS
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	perl
 Requires:	perl-Msql-Mysql-modules
 Requires:	perl-Authen-Radius >= 0.05
@@ -73,7 +73,7 @@ Skrypty perlowe ICRADIUS.
 Summary:	RADIUS dictionaries
 Summary(pl):	S³owniki RADIUS
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description dictionaries
 RADIUS dictionaries.
@@ -90,6 +90,8 @@ S³owniki RADIUS.
 %{__make} -C src \
 	PAM=-DPAM \
 	PAMLIB="-lpam -ldl" \
+	LCRYPT="-lcrypt" \
+	LSHADOW="" \
 	CFLAGS="%{rpmcflags}"
 
 %install
