@@ -3,20 +3,22 @@ Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
 Release:	1
+License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-License:	GPL
-Source0:	%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.innercite.com/pub/icradius/%{name}-%{version}.tar.gz
 Source1:	%{name}.pamd
 Source2:	%{name}.initd
 Source3:	%{name}.logrotate
 Patch0:		%{name}-radius_dir.patch
-URL:		http://radius.innercite.com
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+BuildRequires:	mysql-devel
+BuildRequires:	pam-devel
+URL:		http://radius.innercite.com/
 Requires:	perl-Authen-Radius >= 0.05
 Requires:	perl >= 5.6.0
 Provides:	radius
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	radius
 
 %description
@@ -27,7 +29,7 @@ Summary:	ICRADIUS web interface.
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Requires:	%{name}
+Requires:	%{name} = %{version}
 Requires:	httpd
 
 %description cgi
@@ -38,14 +40,12 @@ Summary:	ICRADIUS MySQL Backend
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
-Requires:	%{name}
-Requires:	mysql
+Requires:	%{name} = %{version}
 Requires:	perl
 Requires:	mysql-client
-BuildRequires:	mysql-devel
 
 %description mysql
-ICRADIUS MySQL Backend
+ICRADIUS MySQL Backend.
 
 %prep
 %setup -q
@@ -77,8 +77,8 @@ install scripts/{radlast,radwatch,radwho,testrad,syncaccounting.pl} \
 
 #db
 install scripts/{radius.db,acctexport.pl,acctimport.pl,acctsummarize.pl} \
-			scripts/{dictimport.pl,radiusfixup.pl,userexport.pl,userimport.pl} \
-			$RPM_BUILD_ROOT/%{_datadir}/%{name}
+	scripts/{dictimport.pl,radiusfixup.pl,userexport.pl,userimport.pl} \
+	$RPM_BUILD_ROOT/%{_datadir}/%{name}
 
 #cgi
 install scripts/images/* \
@@ -99,17 +99,15 @@ gzip -9nf {COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston} \
 	doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO} \
 	doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul} \
 
-touch 			$RPM_BUILD_ROOT/var/log/radutmp
-touch 			$RPM_BUILD_ROOT/var/log/radwtmp
-touch 			$RPM_BUILD_ROOT/var/log/radius.log
+:> $RPM_BUILD_ROOT/var/log/rad{u,w}tmp
+:> $RPM_BUILD_ROOT/var/log/radwtmp
+:> $RPM_BUILD_ROOT/var/log/radius.log
 
 %post
-touch /var/log/radutmp
-touch /var/log/radwtmp
+touch /var/log/rad{u,w}tmp
 /sbin/chkconfig --add radius
 if test -r /var/lock/subsys/radius; then
-	/etc/rc.d/init.d/radius stop >&2
-	/etc/rc.d/init.d/radius start >&2
+	/etc/rc.d/init.d/radius restart >&2
 else
 	echo "Run \"/etc/rc.d/init.d/radius start\" to start radius daemon."
 fi
