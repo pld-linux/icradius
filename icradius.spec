@@ -103,7 +103,7 @@ install src/checkrad.pl \
 			$RPM_BUILD_ROOT/%{_datadir}/%{name}
 
 #dictionaries
-install raddb/dictionary.* \
+install raddb/dictionary* \
 			$RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries
 install	%{SOURCE6} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.cisco-new
 install	%{SOURCE7} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.cistron_default
@@ -116,6 +116,7 @@ install scripts/{radius.cgi,usage.cgi} \
 
 #etc
 install raddb/radius.conf 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
+install raddb/huntgroups 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
 install %{SOURCE1}	$RPM_BUILD_ROOT/%{_sysconfdir}/pam.d/radius
 install %{SOURCE2}	$RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/radius
 install %{SOURCE3}	$RPM_BUILD_ROOT/%{_sysconfdir}/logrotate.d/radius
