@@ -2,7 +2,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	4
+Release:	5
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -57,14 +57,14 @@ BuildRequires:	rpm-perlprov
 ICRADIUS perl scripts
 
 %package dictionaries
-Summary:	RADIUS dictonaries
+Summary:	RADIUS dictionaries
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
 
 %description dictionaries
-RADIUS dictonaries
+RADIUS dictionaries
 
 %prep
 %setup -q
@@ -104,9 +104,9 @@ install src/checkrad.pl \
 
 #dictionaries
 install raddb/dictionary.* \
-			%{SOURCE6} \
-			%{SOURCE7} \
 			$RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries
+install	%{SOURCE6} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.cisco-new
+install	%{SOURCE7} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.cistron_default
 
 #cgi
 install scripts/images/* \
