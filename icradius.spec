@@ -6,8 +6,6 @@ Version:	0.17b
 Release:	7
 License:	GPL
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.innercite.com/pub/icradius/%{name}-%{version}.tar.gz
 Source1:	%{name}.pamd
 Source2:	%{name}.initd
@@ -40,8 +38,6 @@ Serwer RADIUS z backendem MySQL bazowanym na Cistron Radius.
 Summary:	ICRADIUS web interface
 Summary(pl):	Interfejs WWW do ICRADIUS
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
 Requires:	httpd
 
@@ -55,8 +51,6 @@ Interfejs WWW do ICRADIUS.
 Summary:	ICRADIUS perl scripts
 Summary(pl):	Skrypty perlowe ICRADIUS
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
 Requires:	perl
 Requires:	perl-Msql-Mysql-modules
@@ -73,8 +67,6 @@ Skrypty perlowe ICRADIUS.
 Summary:	RADIUS dictionaries
 Summary(pl):	S³owniki RADIUS
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
 
 %description dictionaries
