@@ -9,6 +9,7 @@ Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.innercite.com/pub/icradius/%{name}-%{version}.tar.gz
+# Source0-md5:	ff8eef808dbc601ea120617b787af26b
 Source1:	%{name}.pamd
 Source2:	%{name}.initd
 Source3:	%{name}.logrotate
