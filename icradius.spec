@@ -107,7 +107,7 @@ install -d \
 	$RPM_BUILD_ROOT%{perl_vendorlib}
 
 install src/radiusd scripts/{radlast,radwho,testrad,radwatch} \
-	$RPM_BUILD_ROOT/%{_sbindir}
+	$RPM_BUILD_ROOT%{_sbindir}
 
 #perl
 install src/checkrad.pl \
