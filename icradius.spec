@@ -2,7 +2,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -14,6 +14,7 @@ Source3:	%{name}.logrotate
 Source4:	%{name}.QUICKSTART.txt
 Source5:	%{name}-ICRadiusCFG.pm
 Source6:	%{name}-dictionary.cisco
+Source7:	%{name}-dictionary.default
 Patch0:		%{name}-radius_dir.patch
 Patch1:		%{name}-ICRadiusCFG.patch
 URL:		http://radius.innercite.com/
@@ -104,6 +105,7 @@ install src/checkrad.pl \
 #dictionaries
 install raddb/dictionary.* \
 			${SOURCE6} \
+			${SOURCE7} \
 			$RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries
 
 #cgi
