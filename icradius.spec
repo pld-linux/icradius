@@ -104,8 +104,8 @@ install src/checkrad.pl \
 
 #dictionaries
 install raddb/dictionary.* \
-			${SOURCE6} \
-			${SOURCE7} \
+			%{SOURCE6} \
+			%{SOURCE7} \
 			$RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries
 
 #cgi
