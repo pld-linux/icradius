@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.18.1
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/icradius/%{name}-%{version}.tar.gz
@@ -59,7 +59,6 @@ Summary:	ICRADIUS perl scripts
 Summary(pl):	Skrypty perlowe ICRADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	perl
 Requires:	perl-Msql-Mysql-modules
 Requires:	perl-Authen-Radius >= 0.05
 
