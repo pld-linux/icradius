@@ -1,0 +1,410 @@
+diff -Nru icradius-0.17b.orig/scripts/radius_voip.db icradius-0.17b.voip/scripts/radius_voip.db
+--- icradius-0.17b.orig/scripts/radius_voip.db	Thu Jan  1 01:00:00 1970
++++ icradius-0.17b.voip/scripts/radius_voip.db	Mon May 28 23:00:54 2001
+@@ -0,0 +1,184 @@
++# MySQL dump 4.0
++#
++# Host: localhost    Database: radius
++#--------------------------------------------------------
++
++#
++# Table structure for table 'dictionary'
++#
++CREATE TABLE dictionary (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  Type varchar(30),
++  Attribute varchar(32),
++  Value varchar(32),
++  Format varchar(20),
++  Vendor varchar(32),
++  PRIMARY KEY (id)
++);
++
++#
++# Table structure for table 'nas'
++#
++CREATE TABLE nas (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  nasname varchar(128),
++  shortname varchar(32),
++  ipaddr varchar(15),
++  type varchar(30),
++  ports int(5),
++  secret varchar(60),
++  community varchar(50),
++  snmp varchar(10),
++  PRIMARY KEY (id)
++);
++
++#
++# Table structure for table 'radacct'
++#
++CREATE TABLE radacct (
++  RadAcctId bigint(21) DEFAULT '0' NOT NULL auto_increment,
++  AcctSessionId varchar(32) DEFAULT '' NOT NULL,
++  UserName varchar(32) DEFAULT '' NOT NULL,
++  Realm varchar(30) DEFAULT '',
++  NASIPAddress varchar(15) DEFAULT '' NOT NULL,
++  NASPortId int(12),
++  NASPortType varchar(32),
++  AcctStartTime datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
++  AcctStopTime datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
++  AcctSessionTime int(12),
++  AcctAuthentic varchar(32),
++  ConnectInfo varchar(32),
++  AcctInputOctets int(12),
++  AcctOutputOctets int(12),
++  CalledStationId varchar(10) DEFAULT '' NOT NULL,
++  CallingStationId varchar(10) DEFAULT '' NOT NULL,
++  AcctTerminateCause varchar(32) DEFAULT '' NOT NULL,
++  ServiceType varchar(32),
++  FramedProtocol varchar(32),
++  FramedIPAddress varchar(15) DEFAULT '' NOT NULL,
++  AcctStartDelay int(12),
++  AcctStopDelay int(12),
++  H323GwId varchar(128),
++  H323ConfId varchar(128),
++  CiscoAVPair varchar(128),
++  H323CallOrigin varchar(128),
++  H323CallType varchar(128),
++  H323SetupTime varchar(128),
++  H323ConnectTime varchar(128),
++  H323DisconnectTime varchar(128),
++  H323DisconnectCause varchar(128),
++  H323VoiceQuality varchar(128),
++  H323RemoteAddress varchar(128),
++  PRIMARY KEY (RadAcctId),
++  KEY UserName (UserName),
++  KEY FramedIPAddress (FramedIPAddress),
++  KEY AcctSessionId (AcctSessionId),
++  KEY AcctStartTime (AcctStartTime),
++  KEY AcctStopTime (AcctStopTime),
++  KEY NASIPAddress (NASIPAddress)
++);
++
++#
++# Table structure for table 'radcheck'
++#
++CREATE TABLE radcheck (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  UserName varchar(30) DEFAULT '' NOT NULL,
++  Attribute varchar(30),
++  Value varchar(40),
++  PRIMARY KEY (id),
++  KEY UserName (UserName)
++);
++
++#
++# Table structure for table 'radgroupcheck'
++#
++CREATE TABLE radgroupcheck (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  GroupName varchar(20) DEFAULT '' NOT NULL,
++  Attribute varchar(40),
++  Value varchar(40),
++  PRIMARY KEY (id),
++  KEY GroupName (GroupName)
++);
++
++#
++# Table structure for table 'radgroupreply'
++#
++CREATE TABLE radgroupreply (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  GroupName varchar(20) DEFAULT '' NOT NULL,
++  Attribute varchar(40),
++  Value varchar(40),
++  PRIMARY KEY (id),
++  KEY GroupName (GroupName)
++);
++
++#
++# Table structure for table 'radreply'
++#
++CREATE TABLE radreply (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  UserName varchar(30) DEFAULT '' NOT NULL,
++  Attribute varchar(30),
++  Value varchar(40),
++  PRIMARY KEY (id),
++  KEY UserName (UserName)
++);
++
++#
++# Table structure for table 'usergroup'
++#
++CREATE TABLE usergroup (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  UserName varchar(30) DEFAULT '' NOT NULL,
++  GroupName varchar(30),
++  PRIMARY KEY (id),
++  KEY UserName (UserName)
++);
++
++#
++# Table structure for table 'realmgroup'
++#
++CREATE TABLE realmgroup (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  RealmName varchar(30) DEFAULT '' NOT NULL,
++  GroupName varchar(30),
++  PRIMARY KEY (id),
++  KEY RealmName (RealmName)
++);
++
++CREATE TABLE realms (
++  id int(10) DEFAULT '0' NOT NULL auto_increment,
++  realmname varchar(64),
++  nas varchar(128),
++  authport int(5),
++  options varchar(128) DEFAULT '',
++  PRIMARY KEY (id)
++);
++
++CREATE TABLE radacct_summary (
++  ID int(10) DEFAULT '0' NOT NULL auto_increment,
++  UserName varchar(32) DEFAULT '' NOT NULL,
++  Sessions int(10),
++  PeriodStart datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
++  PeriodStop datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
++  TotalSessionTime int(10),
++  TotalInputOctets int(15),
++  TotalOutputOctets int(15),
++  PRIMARY KEY (ID),
++  KEY UserName (UserName),
++  KEY PeriodStart (PeriodStart),
++  KEY PeriodStop (PeriodStop)
++);
++
++#
++# Table structure for table 'hints'
++#
++ 
++CREATE TABLE hints (
++  id int(10) NOT NULL auto_increment,
++  HintName varchar(32) DEFAULT '' NOT NULL,
++  GroupName varchar(32) DEFAULT '' NOT NULL,
++  PRIMARY KEY (id)
++); 
+diff -Nru icradius-0.17b.orig/src/Makefile icradius-0.17b.voip/src/Makefile
+--- icradius-0.17b.orig/src/Makefile	Mon May 28 22:36:51 2001
++++ icradius-0.17b.voip/src/Makefile	Tue May 29 03:18:15 2001
+@@ -28,6 +28,10 @@
+ # Uncomment these if you want Ascend specific features to store filters in RADIUS and use Ascend secrets
+ #ASCEND_FLAGS	= -DBINARY_FILTERS # -DASCEND_SECRET
+ 
++# Uncomment these if you want VOIP-specific accounting
++#VOIP_ACCT	= -DVOIP
++
++
+ BINDIR  = /usr/local/bin
+ SBINDIR = /usr/local/sbin
+ 
+diff -Nru icradius-0.17b.orig/src/acct.c icradius-0.17b.voip/src/acct.c
+--- icradius-0.17b.orig/src/acct.c	Mon May 28 22:36:51 2001
++++ icradius-0.17b.voip/src/acct.c	Tue May 29 03:15:07 2001
+@@ -81,11 +81,21 @@
+ 	FILE		*backupfile;
+ 	struct stat	backup;
+ 	char		*valbuf;
+-	SQLREC sqlrecord = {"", "", "", "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0};
+-	SQLREC backuprecord = {"", "", "",  "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0};
++	SQLREC sqlrecord = {"", "", "", "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0
++#ifdef VOIP
++		,"", "", "", "", "", "", "", "", "", "", ""
++#endif
++		};
++	SQLREC backuprecord = {"", "", "",  "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0
++#ifdef VOIP
++		,"", "", "", "", "", "", "", "", "", "", ""
++#endif
++		};
+ 	VALUE_PAIR	*pair;
+ 	int		ret = 0;
+-
++#ifdef VOIP
++	int ciscocode = dict_vendorcode(VENDORPEC_CISCO);
++#endif
+ 	pair = authreq->request;
+ 	strncpy(sqlrecord.Realm, authreq->realm, SQLBIGREC);
+ 	while(pair != (VALUE_PAIR *)NULL) {
+@@ -184,6 +194,31 @@
+                 	break;
+ 
+                 default:
++#ifdef VOIP
++			if (pair->attribute == ((ciscocode<<16) + PW_H323_GW_ID))
++				strncpy(sqlrecord.H323GwId, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_CONF_ID))
++				strncpy(sqlrecord.H323ConfId, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_CISCO_AVPAIR))
++				strncpy(sqlrecord.CiscoAVPair, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_CALL_ORIGIN))
++				strncpy(sqlrecord.H323CallOrigin, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_CALL_TYPE))
++				strncpy(sqlrecord.H323CallType, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_SETUP_TIME))
++				strncpy(sqlrecord.H323SetupTime, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_CONNECT_TIME))
++				strncpy(sqlrecord.H323ConnectTime, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_DISCONNECT_TIME))
++				strncpy(sqlrecord.H323DisconnectTime, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_DISCONNECT_CAUSE))
++				strncpy(sqlrecord.H323DisconnectCause, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_VOICE_QUALITY))
++				strncpy(sqlrecord.H323VoiceQuality, pair->strvalue, SQLBIGREC);
++			else if (pair->attribute == ((ciscocode<<16) + PW_H323_REMOTE_ADDRESS))
++				strncpy(sqlrecord.H323RemoteAddress, pair->strvalue, SQLBIGREC);
++
++#endif
+                 	break;
+ 		}
+ 
+diff -Nru icradius-0.17b.orig/src/conf.h icradius-0.17b.voip/src/conf.h
+--- icradius-0.17b.orig/src/conf.h	Mon May 28 22:36:51 2001
++++ icradius-0.17b.voip/src/conf.h	Sun May 27 02:58:11 2001
+@@ -48,7 +48,14 @@
+ #define	QUERYLOG	"/var/log/radacct/radius.sql"
+ #define	MYSQLCONFIG	"radius.conf"
+ #define	MYSQLBACKUP	"/var/log/radacct/sqlbackup.dat"
++/* it looks like data from Cisco VOIPs is somehow long, due to argument's name
++ * added
++ */
++#ifdef VOIP
++#define SQLBIGREC       128
++#else
+ #define SQLBIGREC       32
++#endif
+ #define SQLLILREC       15
+ #define MAX_COMMUNITY_LEN 50
+ #define MAX_SQL_SOCKS	5
+diff -Nru icradius-0.17b.orig/src/mysql.c icradius-0.17b.voip/src/mysql.c
+--- icradius-0.17b.orig/src/mysql.c	Mon May 28 22:36:51 2001
++++ icradius-0.17b.voip/src/mysql.c	Tue May 29 03:21:38 2001
+@@ -526,7 +526,12 @@
+ 		if (num == 0 && ret > 0) {
+ 
+ 			/* Insert new record with blank stop time until we receive the stop record */
+-			snprintf(querystr, 2048, "INSERT INTO %s VALUES (0, '%s', '%s', '%s', '%s', %ld, '%s', '%s', 0, 0, '%s', '%s', 0, 0, '%s', '%s', '', '%s', '%s', '%s', %ld, 0)",
++			snprintf(querystr, 2048, "INSERT INTO %s VALUES (0, '%s', '%s', '%s', '%s', %ld, '%s', '%s', 0, 0, '%s', '%s', 0, 0, '%s', '%s', '', '%s', '%s', '%s', %ld, 0"
++#ifdef VOIP
++			", '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'"
++#endif
++			")"
++			,
+ 			sql->config->sql_acct_table,
+ 			sqlrecord->AcctSessionId,
+ 			sqlrecord->UserName,
+@@ -543,6 +548,20 @@
+ 			sqlrecord->FramedProtocol,
+ 			sqlrecord->FramedIPAddress,
+ 			sqlrecord->AcctDelayTime
++#ifdef VOIP
++			,
++			sqlrecord->H323GwId,
++			sqlrecord->H323ConfId,
++			sqlrecord->CiscoAVPair,
++			sqlrecord->H323CallOrigin,
++			sqlrecord->H323CallType,
++			sqlrecord->H323SetupTime,
++			sqlrecord->H323ConnectTime,
++			sqlrecord->H323DisconnectTime,
++			sqlrecord->H323DisconnectCause,
++			sqlrecord->H323VoiceQuality,
++			sqlrecord->H323RemoteAddress
++#endif
+ 			);                  
+ 	
+ 			if (!sql_query(socket, querystr)) {
+@@ -606,7 +625,12 @@
+ #endif /* CISCO_ACCOUNTING_HACK */
+             
+ 			/* Insert record with no start time until matching start record comes */
+-			snprintf(querystr, 2048, "INSERT INTO %s VALUES (0, '%s', '%s', '%s', '%s', %ld, '%s', 0, '%s', '%lu', '%s', '%s', '%lu', '%lu', '%s', '%s', '%s', '%s', '%s', '%s', 0, %ld)",
++			snprintf(querystr, 2048, "INSERT INTO %s VALUES (0, '%s', '%s', '%s', '%s', %ld, '%s', 0, '%s', '%lu', '%s', '%s', '%lu', '%lu', '%s', '%s', '%s', '%s', '%s', '%s', 0, %ld"
++#ifdef VOIP
++			", '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'"
++#endif
++			")"
++			,
+ 			sql->config->sql_acct_table,
+ 			sqlrecord->AcctSessionId,
+ 			sqlrecord->UserName,
+@@ -627,6 +651,20 @@
+ 			sqlrecord->FramedProtocol,
+ 			sqlrecord->FramedIPAddress,
+ 			sqlrecord->AcctDelayTime
++#ifdef VOIP
++			,
++			sqlrecord->H323GwId,
++			sqlrecord->H323ConfId,
++			sqlrecord->CiscoAVPair,
++			sqlrecord->H323CallOrigin,
++			sqlrecord->H323CallType,
++			sqlrecord->H323SetupTime,
++			sqlrecord->H323ConnectTime,
++			sqlrecord->H323DisconnectTime,
++			sqlrecord->H323DisconnectCause,
++			sqlrecord->H323VoiceQuality,
++			sqlrecord->H323RemoteAddress
++#endif
+ 			);                  
+ 
+ 			if (!sql_query(socket, querystr)) {
+diff -Nru icradius-0.17b.orig/src/radius.h icradius-0.17b.voip/src/radius.h
+--- icradius-0.17b.orig/src/radius.h	Mon May 28 22:36:51 2001
++++ icradius-0.17b.voip/src/radius.h	Tue May 29 01:55:10 2001
+@@ -49,6 +49,8 @@
+ #define PW_ACCT_UDP_PORT		1646
+ 
+ #define VENDORPEC_USR			429
++#define VENDORPEC_CISCO			9
++
+ 
+ #define PW_TYPE_STRING			0
+ #define PW_TYPE_INTEGER			1
+@@ -219,6 +221,21 @@
+ #define PW_AUTHENTICATION_REQUEST	1
+ #define PW_STATUS_ACCOUNTING_ON		7
+ #define PW_STATUS_ACCOUNTING_OFF	8
++
++/*	VOIP flags	*/
++#ifdef VOIP
++#define PW_CISCO_AVPAIR    		1
++#define PW_H323_REMOTE_ADDRESS     	23
++#define PW_H323_CONF_ID    		24
++#define PW_H323_SETUP_TIME 		25
++#define PW_H323_CALL_ORIGIN        	26
++#define PW_H323_CALL_TYPE  		27
++#define PW_H323_CONNECT_TIME       	28
++#define PW_H323_DISCONNECT_TIME    	29
++#define PW_H323_DISCONNECT_CAUSE   	30
++#define PW_H323_VOICE_QUALITY      	31
++#define PW_H323_GW_ID      		33
++#endif
+ 
+ #if defined( BINARY_FILTERS )
+ /*
+diff -Nru icradius-0.17b.orig/src/radiusd.h icradius-0.17b.voip/src/radiusd.h
+--- icradius-0.17b.orig/src/radiusd.h	Mon May 28 22:36:51 2001
++++ icradius-0.17b.voip/src/radiusd.h	Sat May 26 22:54:39 2001
+@@ -157,6 +157,19 @@
+         char                            FramedProtocol[SQLBIGREC];
+         char                            FramedIPAddress[SQLLILREC];
+         unsigned long                   AcctDelayTime;
++#ifdef VOIP
++	char				H323GwId[SQLBIGREC];
++	char				H323ConfId[SQLBIGREC];
++	char				CiscoAVPair[SQLBIGREC];
++	char				H323CallOrigin[SQLBIGREC];
++	char				H323CallType[SQLBIGREC];
++	char				H323SetupTime[SQLBIGREC];
++	char				H323ConnectTime[SQLBIGREC];
++	char				H323DisconnectTime[SQLBIGREC];
++	char				H323DisconnectCause[SQLBIGREC];
++	char				H323VoiceQuality[SQLBIGREC];
++	char				H323RemoteAddress[SQLBIGREC];
++#endif
+ } SQLREC; 
+ 
+ struct pair_list {
