@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	8
+Release:	9
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.innercite.com/pub/icradius/old/%{name}-%{version}.tar.gz
@@ -43,6 +43,7 @@ Summary:	ICRADIUS web interface
 Summary(pl):	Interfejs WWW do ICRADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
+Requires:	%{name}-perl = %{version}
 Requires:	httpd
 
 %description cgi
