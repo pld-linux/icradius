@@ -1,3 +1,4 @@
+%include	/usr/lib/rpm/macros.perl
 Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
@@ -64,7 +65,7 @@ Group(pl):	Sieciowe/Serwery
 Requires:	%{name} = %{version}
 
 %description dictionaries
-RADIUS dictionaries
+RADIUS dictionaries.
 
 %prep
 %setup -q
@@ -78,7 +79,6 @@ cd ..
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d \
 	$RPM_BUILD_ROOT%{_sbindir} \
 	$RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} \
@@ -117,16 +117,16 @@ install scripts/{radius.cgi,usage.cgi} \
 #etc
 install raddb/radius.conf 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
 install raddb/huntgroups 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
-install %{SOURCE1}	$RPM_BUILD_ROOT/%{_sysconfdir}/pam.d/radius
-install %{SOURCE2}	$RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/radius
-install %{SOURCE3}	$RPM_BUILD_ROOT/%{_sysconfdir}/logrotate.d/radius
+install %{SOURCE1}	$RPM_BUILD_ROOT/etc/pam.d/radius
+install %{SOURCE2}	$RPM_BUILD_ROOT/etc/rc.d/init.d/radius
+install %{SOURCE3}	$RPM_BUILD_ROOT/etc/logrotate.d/radius
 install %{SOURCE4}	doc/QUICKSTART.txt
 install %{SOURCE5}	$RPM_BUILD_ROOT/%{perl_sitearch}/ICRadiusCFG.pm
 
 install doc/*.8		$RPM_BUILD_ROOT%{_mandir}/man8
 gzip -9nf scripts/{README,deloldsess.sh,radiusd.cron.daily} \
-	scripts/{radiusd.cron.monthly,rc.radiusd,usonlineconv.pl}
-gzip -9nf {COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston} \
+	scripts/{radiusd.cron.monthly,rc.radiusd,usonlineconv.pl} \
+	{COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston} \
 	doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO} \
 	doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul} \
 	doc/QUICKSTART.txt
@@ -140,7 +140,7 @@ gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
 %post
 touch /var/log/rad{u,w}tmp
 /sbin/chkconfig --add radius
-if test -r /var/lock/subsys/radiusd; then
+if [ -r /var/lock/subsys/radiusd ]; then
 	/etc/rc.d/init.d/radius restart >&2
 else
 	echo "Run \"/etc/rc.d/init.d/radius start\" to start radius daemon."
@@ -151,7 +151,9 @@ fi
 
 %preun
 if [ "$1" = "0" ]; then
-	/etc/rc.d/init.d/radius stop >&2
+	if [ -r /var/lock/subsys/radiusd ]; then
+		/etc/rc.d/init.d/radius stop >&2
+	FI
 	/sbin/chkconfig --del radius
 fi
 
@@ -169,7 +171,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(750,root,root) %dir /var/log/radacct
 %attr(751,root,root) %dir %{_sysconfdir}/raddb
 
-%attr(644,root,root) %config %verify(not size mtime md5) %{_sysconfdir}/raddb/*
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/raddb/*
 
 %attr(755,root,root) %{_sbindir}/radiusd
 %attr(755,root,root) %{_sbindir}/radwatch
