@@ -8,7 +8,7 @@ License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.innercite.com/pub/icradius/%{name}-%{version}.tar.gz
 Source1:	%{name}.pamd
-Source2:	%{name}.initd
+Source2:	%{name}.init
 Source3:	%{name}.logrotate
 Source4:	%{name}.QUICKSTART.txt
 Source5:	%{name}-ICRadiusCFG.pm
