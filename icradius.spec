@@ -189,7 +189,7 @@ fi
 %{_datadir}/%{name}/radius.db
 
 %attr(754,root,root) /etc/rc.d/init.d/radius
-%attr(640,root,root) /etc/logrotate.d/radius
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/radius
 
 %attr(640,root,root) %ghost /var/log/radutmp
 %attr(640,root,root) %ghost /var/log/radwtmp
