@@ -1,0 +1,295 @@
+diff -Nru icradius-0.17b.orig/scripts/acctexport.pl icradius-0.17b/scripts/acctexport.pl
+--- icradius-0.17b.orig/scripts/acctexport.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/acctexport.pl	Mon May 21 00:41:22 2001
+@@ -11,18 +11,14 @@
+ #                                                                      #
+ ########################################################################
+ 
+-
+-use DBI;
+ use strict;
+-
++use ICRadiusCFG;
++use DBI;
+ 
+ my $sth;
+ my $sth1;
+-my $dbusername = 'root';
+-my $dbpassword = 'rootpass';
+-
+-my $dbh = DBI->connect("DBI:mysql:radius", $dbusername, $dbpassword);
+ 
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ 
+ $sth = $dbh->prepare("SELECT * FROM radacct");
+ $sth->execute;
+diff -Nru icradius-0.17b.orig/scripts/acctimport.pl icradius-0.17b/scripts/acctimport.pl
+--- icradius-0.17b.orig/scripts/acctimport.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/acctimport.pl	Mon May 21 00:41:22 2001
+@@ -19,12 +19,10 @@
+ #
+ 
+ use DBI;
++use ICRadiusCFG;
+ use strict;
+ 
+-my $dbusername = 'root';
+-my $dbpassword = 'mysqlroot';
+-
+-my $dbh = DBI->connect("DBI:mysql:radius",$dbusername, $dbpassword);
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ my $sth;
+ my $DEBUG = 1;
+ my $DOUPDATE = 1;
+diff -Nru icradius-0.17b.orig/scripts/acctsummarize.pl icradius-0.17b/scripts/acctsummarize.pl
+--- icradius-0.17b.orig/scripts/acctsummarize.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/acctsummarize.pl	Mon May 21 00:41:22 2001
+@@ -13,11 +13,9 @@
+  
+ use DBI;
+ use strict;
++use ICRadiusCFG;
+  
+-my $dbusername = 'root';
+-my $dbpassword = 'rootpass';
+- 
+-my $dbh = DBI->connect("DBI:mysql:radius",$dbusername, $dbpassword) || die "Cound not connect to radius database as $dbusername\n";
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ my $sth;
+ 
+ my $time = getrolldate();
+diff -Nru icradius-0.17b.orig/scripts/dictimport.pl icradius-0.17b/scripts/dictimport.pl
+--- icradius-0.17b.orig/scripts/dictimport.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/dictimport.pl	Mon May 21 00:41:22 2001
+@@ -13,6 +13,7 @@
+ 
+ 
+ use DBI;
++use ICRadiusCFG;
+ use strict;
+ my $file = shift || '';
+ 
+@@ -21,9 +22,7 @@
+   exit;
+ }
+ 
+-my $dbusername = 'root';
+-my $dbpassword = 'rootpass';
+-my $dbh = DBI->connect("DBI:mysql:radius",$dbusername, $dbpassword) || die "Could not connect to radius database as $dbusername\n";
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ 
+ open(DICT, $file) || die "Cannot open $file for read\n";
+ 
+diff -Nru icradius-0.17b.orig/scripts/radius.cgi icradius-0.17b/scripts/radius.cgi
+--- icradius-0.17b.orig/scripts/radius.cgi	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/radius.cgi	Mon May 21 00:41:22 2001
+@@ -14,25 +14,28 @@
+ use DBI;
+ use strict;
+ use CGI;
+-#use Authen::Radius;                    # uncomment this line if using authtype = 1 set below
++use Authen::Radius;                    # uncomment this line if using authtype = 1 set below
++use ICRadiusCFG;
+ 
+-my $dbusername = 'root';                # username to access radius database
+-my $dbpassword = 'rootpass';            # password to access radius database
+-my $dbhost = 'localhost';               # host radius database is on
+-my $authtype = 0;                       # 0 = local lookup; 1 = RADIUS authentication
+-my $sessionfile = '/usr/local/apache/cgi-bin/radsess';   # session file
++#my $dbhost = $ICRadiusCFG::dbhost;      # host radius database is on
++my $dbhost = '';					# because i am on localhost i use socket to connect to mysql
++my $dbname = $ICRadiusCFG::dbname;  # radius database name
++my $dbusername = $ICRadiusCFG::dbusername;  # username to access radius database
++my $dbpassword = $ICRadiusCFG::dbpassword;  # password to access radius database
++my $authtype = 1;                       # 0 = local lookup; 1 = RADIUS authentication
++my $sessionfile = '/var/tmp/radsess';   # session file
+ my $tmpdir = '/tmp';			# Location to store temp files
+ my $cookiedomain = ".innercite.com";    # domain if THIS server, should prepend with a '.'
+ my $logfile = "/var/log/radius.log";    # file of radius log (if on this server). Used to view log via web
+ my $cookieexpire = '+12h';              # expire the cookie session after this much idle time
+ my $sessexpire = 43200;                 # expire session after this long of no use (in seconds)
+-my $radhost = 'radius1.yourdomain.com'; # RADIUS host
++my $radhost = 'localhost'; # RADIUS host
+ my $radsecret = 'testsecret';           # RADIUS secret to connect to $radhost
+ 
+ my $body = "<body bgcolor=dddddd>";
+ 
+ #### Should not have to change anything under this line ####
+-my $dbh = DBI->connect("DBI:mysql:radius:$dbhost", $dbusername, $dbpassword);
++my $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost", $dbusername, $dbpassword);
+ my $printmainpage = 1;
+ my $total = 0;
+ my $i = 0;
+diff -Nru icradius-0.17b.orig/scripts/radiusfixup.pl icradius-0.17b/scripts/radiusfixup.pl
+--- icradius-0.17b.orig/scripts/radiusfixup.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/radiusfixup.pl	Mon May 21 00:41:22 2001
+@@ -1,13 +1,14 @@
+-#!/usr/bin/perl
++#!/usr/bin/perl -T
+ 
+ 
+ use DBI;
++use ICRadiusCFG;
+ use strict;
+ 
+ my $dbusername = 'root';
+ my $dbpassword = 'rootpass';
+ 
+-my $dbh = DBI->connect("DBI:mysql:radius",$dbusername, $dbpassword);
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ 
+ my $sth;
+ my $sth1;
+diff -Nru icradius-0.17b.orig/scripts/radlast icradius-0.17b/scripts/radlast
+--- icradius-0.17b.orig/scripts/radlast	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/radlast	Mon May 21 00:41:22 2001
+@@ -14,12 +14,13 @@
+ 
+ use strict;
+ use DBI;
++use ICRadiusCFG;
+ 
+ # radwho options
+-my $db_host = 'localhost';	# MySQL server
+-my $db_db = 'radius';		# MySQL RADIUS database
+-my $db_user = 'radius';		# MySQL username
+-my $db_pass = 'icradius';	# MySQL password
++my $db_host = $ICRadiusCFG::dbhost;	# MySQL server
++my $db_db =   $ICRadiusCFG::dbname;	# MySQL RADIUS database
++my $db_user = $ICRadiusCFG::dbusername; # MySQL username
++my $db_pass = $ICRadiusCFG::dbpassword;	# MySQL password
+ 
+ 
+ # Globals
+diff -Nru icradius-0.17b.orig/scripts/radwho icradius-0.17b/scripts/radwho
+--- icradius-0.17b.orig/scripts/radwho	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/radwho	Mon May 21 00:41:22 2001
+@@ -14,12 +14,13 @@
+ 
+ use strict;
+ use DBI;
++use ICRadiusCFG;
+ 
+ # radwho options
+-my $db_host = 'localhost';	# MySQL server
+-my $db_db = 'radius';		# MySQL RADIUS database
+-my $db_user = 'radius';		# MySQL username
+-my $db_pass = 'icradius';	# MySQL password
++my $db_host = $ICRadiusCFG::dbhost;	# MySQL server
++my $db_db =   $ICRadiusCFG::dbname;	# MySQL RADIUS database
++my $db_user = $ICRadiusCFG::dbusername; # MySQL username
++my $db_pass = $ICRadiusCFG::dbpassword;	# MySQL password
+ my $fingerd = 1;		# (0/1) be fingerd
+ 
+ 
+diff -Nru icradius-0.17b.orig/scripts/syncaccounting.pl icradius-0.17b/scripts/syncaccounting.pl
+--- icradius-0.17b.orig/scripts/syncaccounting.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/syncaccounting.pl	Mon May 21 00:41:22 2001
+@@ -12,11 +12,10 @@
+ ########################################################################
+ 
+ use DBI;
++use ICRadiusCFG;
+ use strict;
+ use Getopt::Std;
+ 
+-my $username = 'root';
+-my $password = 'rootpass';
+ my $community = 'public';
+ 
+ 
+@@ -38,7 +37,7 @@
+   exit;
+ }
+ 
+-my $dbh = DBI->connect("DBI:mysql:radius", $username, $password) || die "Cannot connect to radius database to fix accounting records\n";
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ my ($sth, $sth1);
+ my $i = 0;
+ 
+diff -Nru icradius-0.17b.orig/scripts/usage.cgi icradius-0.17b/scripts/usage.cgi
+--- icradius-0.17b.orig/scripts/usage.cgi	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/usage.cgi	Mon May 21 00:41:22 2001
+@@ -22,16 +22,21 @@
+ use DBI;
+ use strict;
+ use CGI;
++use ICRadiusCFG;
+ 
+ 
+ ##### Configuration Section ######
+ 
+-#use Authen::Radius;	#Uncomment for authtype 1 below
++use Authen::Radius;	#Uncomment for authtype 1 below
+ 
+-my $dbusername = 'radius';				# Username to connect to radius database
+-my $dbpassword = '';					# Password to connect to radius database
+-my $authtype = 0;					# 0 = local lookup; 1 = RADIUS authentication
+-my $sessionfile = '/var/lib/apache/cgi-bin/radsess';	# session file (needs to be read/writeable by web server, and sometimes same partition)
++#my $dbhost = $ICRadiusCFG::dbhost;      # host radius database is on
++my $dbhost = '';					# because i am on localhost i use socket to connect to mysql
++my $dbname = $ICRadiusCFG::dbname;  # radius database name
++my $dbusername = $ICRadiusCFG::dbusername;  # username to access radius database
++my $dbpassword = $ICRadiusCFG::dbpassword;  # password to access radius database
++my $authtype = 1;                       # 0 = local lookup; 1 = RADIUS authentication
++
++my $sessionfile = '/var/tmp/radsess';	# session file (needs to be read/writeable by web server, and sometimes same partition)
+ my $cookiedomain = '.domain.com';			# Domain of your web server (with a '.' in front)
+ my $cookieexpire = '+3m';				# Time until their session expires
+ my $sessexpire = 180;					# Session timeout in seconds
+@@ -39,7 +44,6 @@
+ my $radhost = 'localhost';				# Hostname of radius server
+ my $radsecret = '';					# RADIUS secret for this server
+ my $allow_changepass = 0;				# Allow users to change their password (only works with clear text passwords)
+-my $dbhost = '';					# becouse i am on localhost i use socket to connect to mysql
+ 
+ my $body = "<body bgcolor=FFFFFF>";
+ 
+@@ -49,7 +53,7 @@
+ 
+ my ($sth);
+ 
+-my $dbh = DBI->connect("DBI:mysql:radius:$dbhost", $dbusername, $dbpassword);
++my $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost", $dbusername, $dbpassword);
+ my $printheader = 1;
+ my $query = new CGI;
+ my $cgi = $query->url();
+diff -Nru icradius-0.17b.orig/scripts/userexport.pl icradius-0.17b/scripts/userexport.pl
+--- icradius-0.17b.orig/scripts/userexport.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/userexport.pl	Mon May 21 00:41:22 2001
+@@ -15,11 +15,10 @@
+ 
+ 
+ use DBI;
++use ICRadiusCFG;
+ use strict;
+ 
+-my $dbusername = 'root';
+-my $dbpassword = 'rootpass';
+-my $dbh = DBI->connect("DBI:mysql:radius", $dbusername, $dbpassword) || die "Cound not connect to radius database as $dbusername\n";
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ 
+ my $mode = shift;
+ 
+diff -Nru icradius-0.17b.orig/scripts/userimport.pl icradius-0.17b/scripts/userimport.pl
+--- icradius-0.17b.orig/scripts/userimport.pl	Sun May 20 21:25:59 2001
++++ icradius-0.17b/scripts/userimport.pl	Mon May 21 00:41:22 2001
+@@ -13,6 +13,7 @@
+ 
+ 
+ use DBI;
++use ICRadiusCFG;
+ use strict;
+ my $file = shift || '';
+ 
+@@ -21,9 +22,7 @@
+   exit;
+ }
+ 
+-my $dbusername = 'radius';
+-my $dbpassword = 'radiuspasswd';
+-my $dbh = DBI->connect("DBI:mysql:radius", $dbusername, $dbpassword) || die "Cound not connect to radius database as $dbusername\n";
++my $dbh = DBI->connect("DBI:mysql:$ICRadiusCFG::dbname", $ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword) || die "Cound not connect to radius database as $ICRadiusCFG::dbusername\n";
+ 
+ my $lastrow = 0;
+ 
