@@ -1,12 +1,14 @@
 You need to (default values for PLD system):
 
-1. set proper login, password and radius_db at /etc/raddb/radius.conf
+1. set proper login, password on 'radius' db (yes,
+   it has to be 'radius' unless you change it 
+   in sources) at /etc/raddb/radius.conf
 2. create a radius db:
-	mysqladmin -u mysql -p mysql_pwd create radius_db
+	mysqladmin -u mysql -p create radius
 3. import /usr/share/icradius/radius.db schema:
-	mysql -u mysql -p mysql_pwd radius_db < /usr/share/icradius/radius.db
+	mysql -u mysql -p radius < /usr/share/icradius/radius.db
 4. grant permissions to radius_user:
-	echo "GRANT ALL ON radius_db.* TO radius_user@localhost \
+	echo "GRANT ALL ON radius.* TO radius_user@localhost \
 	IDENTIFIED BY \'radius_pwd\';" |
 		mysql -u mysql -p mysql_pwd mysql
 
