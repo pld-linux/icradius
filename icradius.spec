@@ -177,13 +177,13 @@ fi
 
 %attr(750,root,root) %dir /var/log/radacct
 %attr(751,root,root) %dir %{_sysconfdir}/raddb
-
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/raddb/*
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/raddb/*
 
 %attr(755,root,root) %{_sbindir}/radiusd
 %attr(755,root,root) %{_sbindir}/radwatch
-%attr(644,root,root) %{_mandir}/*/*
-%attr(644,root,root) %{_datadir}/%{name}/radius.db
+%{_mandir}/*/*
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/radius.db
 
 %attr(754,root,root) /etc/rc.d/init.d/radius
 %attr(640,root,root) /etc/logrotate.d/radius
@@ -209,4 +209,4 @@ fi
 
 %files dictionaries
 %defattr(644,root,root,755)
-%attr(644,root,root) %{_datadir}/%{name}/dictionaries/*
+%{_datadir}/%{name}/dictionaries
