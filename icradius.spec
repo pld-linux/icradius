@@ -27,6 +27,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	perl-Authen-Radius >= 0.05
 Requires:	perl-base >= 5.6.0
 Requires:	mysql
+Requires:	pam >= 0.77.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	radius
 Obsoletes:	radius
