@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	7
+Release:	8
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.innercite.com/pub/icradius/old/%{name}-%{version}.tar.gz
@@ -20,11 +20,11 @@ Patch2:		%{name}-Cisco-VOIP.patch
 URL:		http://radius.innercite.com/
 BuildRequires:	mysql-devel
 BuildRequires:	pam-devel
-BuildRequires:	rpm-perlprov
+BuildRequires:	rpm-perlprov >= 4.1-13
 Requires(post):	fileutils
 Requires(post,preun):	/sbin/chkconfig
 Requires:	perl-Authen-Radius >= 0.05
-Requires:	perl >= 5.6.0
+Requires:	perl-base >= 5.6.0
 Requires:	mysql
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	radius
@@ -102,7 +102,7 @@ install -d \
 	$RPM_BUILD_ROOT/etc/logrotate.d \
 	$RPM_BUILD_ROOT%{_mandir}/man8 \
 	$RPM_BUILD_ROOT/var/log/radacct \
-	$RPM_BUILD_ROOT%{perl_sitearch}
+	$RPM_BUILD_ROOT%{perl_vendorlib}
 
 install src/radiusd scripts/{radlast,radwho,testrad,radwatch} \
 	$RPM_BUILD_ROOT/%{_sbindir}
@@ -131,7 +131,7 @@ install %{SOURCE1}	$RPM_BUILD_ROOT/etc/pam.d/radius
 install %{SOURCE2}	$RPM_BUILD_ROOT/etc/rc.d/init.d/radius
 install %{SOURCE3}	$RPM_BUILD_ROOT/etc/logrotate.d/radius
 install %{SOURCE4}	doc/QUICKSTART.txt
-install %{SOURCE5}	$RPM_BUILD_ROOT%{perl_sitearch}/ICRadiusCFG.pm
+install %{SOURCE5}	$RPM_BUILD_ROOT%{perl_vendorlib}/ICRadiusCFG.pm
 
 install doc/*.8		$RPM_BUILD_ROOT%{_mandir}/man8
 
@@ -203,7 +203,7 @@ fi
 %attr(755,root,root) %{_sbindir}/radwho
 %attr(755,root,root) %{_sbindir}/testrad
 %attr(755,root,root) %{_datadir}/%{name}/*.pl
-%{perl_sitearch}/ICRadiusCFG.pm
+%{perl_vendorlib}/ICRadiusCFG.pm
 
 %files dictionaries
 %defattr(644,root,root,755)
