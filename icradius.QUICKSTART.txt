@@ -10,7 +10,7 @@ You need to (default values for PLD system):
 4. grant permissions to radius_user:
 	echo "GRANT ALL ON radius.* TO radius_user@localhost \
 	IDENTIFIED BY \'radius_pwd\';" |
-		mysql -u mysql -p mysql_pwd mysql
+		mysql -u mysql -p mysql
 
 Otherwise daemon will crash on startup. If you find other problems
 consult /var/log/radius.log and mysql info page.
