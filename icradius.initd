@@ -14,7 +14,7 @@ case "$1" in
   start)
    # Check if the service is already running?
    if [ ! -f /var/lock/subsys/radiusd ]; then
-      show Starting RADIUSD server
+      msg_starting ICRADIUS
       daemon radiusd -y
       touch /var/lock/subsys/radiusd
    else
@@ -23,7 +23,7 @@ case "$1" in
    fi
 	;;
   stop)
-	show Stopping RADIUSD server
+	msg_stopping ICRADIUS
 	killproc radiusd
 	rm -f /var/lock/subsys/radiusd
 	;;
