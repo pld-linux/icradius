@@ -200,35 +200,35 @@ diff -Nru icradius-0.17b.orig/src/Makefile icradius-0.17b.voip/src/Makefile
  BINDIR  = /usr/local/bin
  SBINDIR = /usr/local/sbin
  
-diff -Nru icradius-0.17b.orig/src/acct.c icradius-0.17b.voip/src/acct.c
---- icradius-0.17b.orig/src/acct.c	Mon May 28 22:36:51 2001
-+++ icradius-0.17b.voip/src/acct.c	Tue May 29 03:15:07 2001
-@@ -81,11 +81,21 @@
+--- icradius-0.18.1/src/acct.c.orig	2001-06-12 03:31:23.000000000 +0200
++++ icradius-0.18.1/src/acct.c	2003-12-09 22:41:29.283897904 +0100
+@@ -82,11 +82,23 @@
+ 	int		sqlstatus;
  	FILE		*backupfile;
  	struct stat	backup;
- 	char		*valbuf;
--	SQLREC sqlrecord = {"", "", "", "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0};
 -	SQLREC backuprecord = {"", "", "",  "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0};
++	SQLREC backuprecord = {"", "", "",  "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0
++#ifdef VOIP
++		,"", "", "", "", "", "", "", "", "", "", ""
+ #endif
+-	SQLREC sqlrecord = {"", "", "", "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0};
++		};
++#endif
 +	SQLREC sqlrecord = {"", "", "", "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0
 +#ifdef VOIP
 +		,"", "", "", "", "", "", "", "", "", "", ""
 +#endif
 +		};
-+	SQLREC backuprecord = {"", "", "",  "", 0, "", "", 0, "", 0, "", "", 0, 0, "", "", "", "", "", "", 0
-+#ifdef VOIP
-+		,"", "", "", "", "", "", "", "", "", "", ""
-+#endif
-+		};
++
  	VALUE_PAIR	*pair;
  	int		ret = 0;
--
 +#ifdef VOIP
 +	int ciscocode = dict_vendorcode(VENDORPEC_CISCO);
 +#endif
+ 
  	pair = authreq->request;
  	strncpy(sqlrecord.Realm, authreq->realm, SQLBIGREC);
- 	while(pair != (VALUE_PAIR *)NULL) {
-@@ -184,6 +194,31 @@
+@@ -186,6 +198,31 @@
                  	break;
  
                  default:

@@ -80,46 +80,44 @@ diff -Nru icradius-0.17b.orig/scripts/dictimport.pl icradius-0.17b/scripts/dicti
  
  open(DICT, $file) || die "Cannot open $file for read\n";
  
-diff -Nru icradius-0.17b.orig/scripts/radius.cgi icradius-0.17b/scripts/radius.cgi
---- icradius-0.17b.orig/scripts/radius.cgi	Sun May 20 21:25:59 2001
-+++ icradius-0.17b/scripts/radius.cgi	Mon May 21 00:41:22 2001
-@@ -14,25 +14,28 @@
- use DBI;
+--- icradius-0.18.1/scripts/radius.cgi.orig	2001-06-26 19:44:45.000000000 +0200
++++ icradius-0.18.1/scripts/radius.cgi	2003-12-09 22:12:34.818576712 +0100
+@@ -38,20 +38,21 @@
+ ####################################################################################
+ 
  use strict;
- use CGI;
--#use Authen::Radius;                    # uncomment this line if using authtype = 1 set below
-+use Authen::Radius;                    # uncomment this line if using authtype = 1 set below
 +use ICRadiusCFG;
  
--my $dbusername = 'root';                # username to access radius database
--my $dbpassword = 'rootpass';            # password to access radius database
--my $dbhost = 'localhost';               # host radius database is on
--my $authtype = 0;                       # 0 = local lookup; 1 = RADIUS authentication
--my $sessionfile = '/usr/local/apache/cgi-bin/radsess';   # session file
-+#my $dbhost = $ICRadiusCFG::dbhost;      # host radius database is on
-+my $dbhost = '';					# because i am on localhost i use socket to connect to mysql
-+my $dbname = $ICRadiusCFG::dbname;  # radius database name
-+my $dbusername = $ICRadiusCFG::dbusername;  # username to access radius database
-+my $dbpassword = $ICRadiusCFG::dbpassword;  # password to access radius database
-+my $authtype = 1;                       # 0 = local lookup; 1 = RADIUS authentication
-+my $sessionfile = '/var/tmp/radsess';   # session file
- my $tmpdir = '/tmp';			# Location to store temp files
- my $cookiedomain = ".innercite.com";    # domain if THIS server, should prepend with a '.'
- my $logfile = "/var/log/radius.log";    # file of radius log (if on this server). Used to view log via web
- my $cookieexpire = '+12h';              # expire the cookie session after this much idle time
- my $sessexpire = 43200;                 # expire session after this long of no use (in seconds)
--my $radhost = 'radius1.yourdomain.com'; # RADIUS host
-+my $radhost = 'localhost'; # RADIUS host
- my $radsecret = 'testsecret';           # RADIUS secret to connect to $radhost
+-my $database		= 'radius';						# radius database
++my $database		= $ICRadiusCFG::dbname;					# radius database
+ my $logfile		= "/var/log/radius.log";				# location of radius log
+-my $sessions_file	= "/usr/local/apache/cgi-bin/icradiusweb.sessions";	# location of session file
++my $sessions_file	= "/var/tmp/icradiusweb.sessions";			# location of session file
+ my $session_timeout	= 7200;							# session timeout (in seconds)
+-my $authentication_type	= 1;							# 1 = local, 2 = radius daemon, 3 = IC-ISP
+-#	use Authen::Radius;							# uncommect line if above is set to 2
++my $authentication_type	= 2;							# 1 = local, 2 = radius daemon, 3 = IC-ISP
++use Authen::Radius;								# uncommect line if above is set to 2
+ #	use lib qw(/usr/local/custdb2/lib);					# uncomment line if above is set to 3
+ #	use Custdb::Admin;							# uncomment line if above is set to 3
+ #	use Custdb::DB;								# uncomment line if above is set to 3
+ my $cookie_name		= 'icradiusweb';					# name of session cookie
+ my $cookie_domain	= '.mydomain.com';					# cookie domain
+ my $tmp_sessions_file	= "/tmp/icradiusweb.sessions.$$";			# location of temporary sessions file
+-my $radhost		= 'radius.mydomain.com';				# radius host (if $authentication_type is 2)
++my $radhost		= 'localhost';						# radius host (if $authentication_type is 2)
+ my $radsecret		= '';							# radius secret (if $authentication_type is 2)
+ my $highlight		= 'lightblue';						# highlight color of tables
+ my $fontname		= 'Comic Sans MS';					# default font
+@@ -59,7 +60,7 @@
  
- my $body = "<body bgcolor=dddddd>";
+ use IC::Radius;
+ my $radius = new IC::Radius;
+-$radius->init('radius', 'radiuspass', 'localhost', $database);
++$radius->init($ICRadiusCFG::dbusername, $ICRadiusCFG::dbpassword, 'localhost', $database);
  
- #### Should not have to change anything under this line ####
--my $dbh = DBI->connect("DBI:mysql:radius:$dbhost", $dbusername, $dbpassword);
-+my $dbh = DBI->connect("DBI:mysql:$dbname:$dbhost", $dbusername, $dbpassword);
- my $printmainpage = 1;
- my $total = 0;
- my $i = 0;
+ use CGI;
+ my $query = new CGI;
 diff -Nru icradius-0.17b.orig/scripts/radiusfixup.pl icradius-0.17b/scripts/radiusfixup.pl
 --- icradius-0.17b.orig/scripts/radiusfixup.pl	Sun May 20 21:25:59 2001
 +++ icradius-0.17b/scripts/radiusfixup.pl	Mon May 21 00:41:22 2001
@@ -207,15 +205,14 @@ diff -Nru icradius-0.17b.orig/scripts/syncaccounting.pl icradius-0.17b/scripts/s
  my ($sth, $sth1);
  my $i = 0;
  
-diff -Nru icradius-0.17b.orig/scripts/usage.cgi icradius-0.17b/scripts/usage.cgi
---- icradius-0.17b.orig/scripts/usage.cgi	Sun May 20 21:25:59 2001
-+++ icradius-0.17b/scripts/usage.cgi	Mon May 21 00:41:22 2001
-@@ -22,16 +22,21 @@
+--- icradius-0.18.1/scripts/usage.cgi.orig	2001-04-11 20:14:56.000000000 +0200
++++ icradius-0.18.1/scripts/usage.cgi	2003-12-09 22:20:50.886162976 +0100
+@@ -22,16 +22,17 @@
  use DBI;
  use strict;
  use CGI;
+-
 +use ICRadiusCFG;
- 
  
  ##### Configuration Section ######
  
@@ -226,26 +223,15 @@ diff -Nru icradius-0.17b.orig/scripts/usage.cgi icradius-0.17b/scripts/usage.cgi
 -my $dbpassword = '';					# Password to connect to radius database
 -my $authtype = 0;					# 0 = local lookup; 1 = RADIUS authentication
 -my $sessionfile = '/var/lib/apache/cgi-bin/radsess';	# session file (needs to be read/writeable by web server, and sometimes same partition)
-+#my $dbhost = $ICRadiusCFG::dbhost;      # host radius database is on
-+my $dbhost = '';					# because i am on localhost i use socket to connect to mysql
 +my $dbname = $ICRadiusCFG::dbname;  # radius database name
-+my $dbusername = $ICRadiusCFG::dbusername;  # username to access radius database
-+my $dbpassword = $ICRadiusCFG::dbpassword;  # password to access radius database
-+my $authtype = 1;                       # 0 = local lookup; 1 = RADIUS authentication
-+
-+my $sessionfile = '/var/tmp/radsess';	# session file (needs to be read/writeable by web server, and sometimes same partition)
++my $dbusername = $ICRadiusCFG::dbusername;		# Username to connect to radius database
++my $dbpassword = $ICRadiusCFG::dbpassword;		# Password to connect to radius database
++my $authtype = 1;					# 0 = local lookup; 1 = RADIUS authentication
++my $sessionfile = '/var/tmp/radsess';			# session file (needs to be read/writeable by web server, and sometimes same partition)
  my $cookiedomain = '.domain.com';			# Domain of your web server (with a '.' in front)
  my $cookieexpire = '+3m';				# Time until their session expires
  my $sessexpire = 180;					# Session timeout in seconds
-@@ -39,7 +44,6 @@
- my $radhost = 'localhost';				# Hostname of radius server
- my $radsecret = '';					# RADIUS secret for this server
- my $allow_changepass = 0;				# Allow users to change their password (only works with clear text passwords)
--my $dbhost = '';					# becouse i am on localhost i use socket to connect to mysql
- 
- my $body = "<body bgcolor=FFFFFF>";
- 
-@@ -49,7 +53,7 @@
+@@ -49,7 +50,7 @@
  
  my ($sth);
  
