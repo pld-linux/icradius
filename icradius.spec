@@ -18,15 +18,19 @@ Patch0:		%{name}-radius_dir.patch
 Patch1:		%{name}-ICRadiusCFG.patch
 Patch2:		%{name}-Cisco-VOIP.patch
 URL:		http://radius.innercite.com/
+BuildRequires:	mysql-devel
+BuildRequires:	pam-devel
+BuildRequires:	rpm-perlprov
+Requires(post):	fileutils
+Requires(post,preun):	/sbin/chkconfig
 Requires:	perl-Authen-Radius >= 0.05
 Requires:	perl >= 5.6.0
 Requires:	mysql
-Prereq:		/sbin/chkconfig
-BuildRequires:	mysql-devel
-BuildRequires:	pam-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	radius
 Obsoletes:	radius
+
+%define		htmldir		/home/services/httpd/html
 
 %description
 RADIUS server with MySQL backend based on Cistron Radius.
@@ -55,7 +59,6 @@ Requires:	%{name} = %{version}
 Requires:	perl
 Requires:	perl-Msql-Mysql-modules
 Requires:	perl-Authen-Radius >= 0.05
-BuildRequires:	rpm-perlprov
 
 %description perl
 ICRADIUS perl scripts.
@@ -82,9 +85,9 @@ S³owniki RADIUS.
 %patch2 -p1
 
 %build
-cd src
-%{__make} PAM=-DPAM PAMLIB="-lpam -ldl" CFLAGS="%{rpmcflags}"
-cd ..
+%{__make} -C src \
+	PAM=-DPAM PAMLIB="-lpam -ldl" \
+	CFLAGS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -92,7 +95,7 @@ install -d \
 	$RPM_BUILD_ROOT%{_sbindir} \
 	$RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries \
-	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}/images \
+	$RPM_BUILD_ROOT%{htmldir}/%{name}/images \
 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb \
 	$RPM_BUILD_ROOT/etc/pam.d \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d \
@@ -109,19 +112,17 @@ install src/checkrad.pl \
 			scripts/{radius.db,acctexport.pl,acctimport.pl,acctsummarize.pl} \
 			scripts/{dictimport.pl,radiusfixup.pl,userexport.pl} \
 			scripts/{userimport.pl,syncaccounting.pl} \
-			$RPM_BUILD_ROOT/%{_datadir}/%{name}
+			$RPM_BUILD_ROOT%{_datadir}/%{name}
 
 #dictionaries
 install raddb/dictionary* \
-			$RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries
-install	%{SOURCE6} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.cisco-new
-install	%{SOURCE7} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.cistron_default
+			$RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries
+install	%{SOURCE6} $RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries/dictionary.cisco-new
+install	%{SOURCE7} $RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries/dictionary.cistron_default
 
 #cgi
-install scripts/images/* \
-	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}/images
-install scripts/{radius.cgi,usage.cgi} \
-	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}
+install scripts/images/* $RPM_BUILD_ROOT%{htmldir}/%{name}/images
+install scripts/{radius.cgi,usage.cgi} $RPM_BUILD_ROOT%{htmldir}/%{name}
 
 #etc
 install raddb/radius.conf 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
@@ -130,11 +131,11 @@ install %{SOURCE1}	$RPM_BUILD_ROOT/etc/pam.d/radius
 install %{SOURCE2}	$RPM_BUILD_ROOT/etc/rc.d/init.d/radius
 install %{SOURCE3}	$RPM_BUILD_ROOT/etc/logrotate.d/radius
 install %{SOURCE4}	doc/QUICKSTART.txt
-install %{SOURCE5}	$RPM_BUILD_ROOT/%{perl_sitearch}/ICRadiusCFG.pm
+install %{SOURCE5}	$RPM_BUILD_ROOT%{perl_sitearch}/ICRadiusCFG.pm
 
 install doc/*.8		$RPM_BUILD_ROOT%{_mandir}/man8
 
-gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
+gzip -9nf $RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries/*
 
 :> $RPM_BUILD_ROOT/var/log/radutmp
 :> $RPM_BUILD_ROOT/var/log/radwtmp
@@ -144,6 +145,7 @@ gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
 rm -rf $RPM_BUILD_ROOT
 
 %post
+umask 027
 touch /var/log/rad{u,w}tmp
 /sbin/chkconfig --add radius
 if [ -r /var/lock/subsys/radiusd ]; then
@@ -165,7 +167,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc COPYING COPYRIGHT.Cistron COPYRIGHT.ICRADIUS COPYRIGHT.Livingston
+%doc COPYRIGHT.Cistron COPYRIGHT.ICRADIUS COPYRIGHT.Livingston
 %doc doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO}
 %doc doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul}
 %doc scripts/*
@@ -188,11 +190,12 @@ fi
 %attr(640,root,root) %ghost /var/log/radwtmp
 %attr(640,root,root) %ghost /var/log/radius.log
 
-/etc/pam.d/radius
+%config(noreplace) %verify(not size mtime md5) /etc/pam.d/radius
 
 %files cgi
 %defattr(644,root,root,755)
-%attr(755,root,root) /home/services/httpd/html/%{name}/*
+%dir %{htmldir}/%{name}
+%attr(755,root,root) %{htmldir}/%{name}/*
 
 %files perl
 %defattr(644,root,root,755)
