@@ -6,7 +6,7 @@ Version:	0.17b
 Release:	7
 License:	GPL
 Group:		Networking/Daemons
-Source0:	ftp://ftp.innercite.com/pub/icradius/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.innercite.com/pub/icradius/old/%{name}-%{version}.tar.gz
 Source1:	%{name}.pamd
 Source2:	%{name}.init
 Source3:	%{name}.logrotate
@@ -187,6 +187,8 @@ fi
 %attr(640,root,root) %ghost /var/log/radutmp
 %attr(640,root,root) %ghost /var/log/radwtmp
 %attr(640,root,root) %ghost /var/log/radius.log
+
+/etc/pam.d/radius
 
 %files cgi
 %defattr(644,root,root,755)
