@@ -92,7 +92,7 @@ install -d \
 	$RPM_BUILD_ROOT%{_sbindir} \
 	$RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries \
-	$RPM_BUILD_ROOT/home/httpd/html/%{name}/images \
+	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}/images \
 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb \
 	$RPM_BUILD_ROOT%{_sysconfdir}/pam.d \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d \
@@ -119,9 +119,9 @@ install	%{SOURCE7} $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/dictionary.c
 
 #cgi
 install scripts/images/* \
-	$RPM_BUILD_ROOT/home/httpd/html/%{name}/images
+	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}/images
 install scripts/{radius.cgi,usage.cgi} \
-	$RPM_BUILD_ROOT/home/httpd/html/%{name}
+	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}
 
 #etc
 install raddb/radius.conf 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
@@ -190,7 +190,7 @@ fi
 
 %files cgi
 %defattr(644,root,root,755)
-%attr(755,root,root) /home/httpd/html/%{name}/*
+%attr(755,root,root) /home/services/httpd/html/%{name}/*
 
 %files perl
 %defattr(644,root,root,755)
