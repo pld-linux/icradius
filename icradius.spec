@@ -95,7 +95,7 @@ install -d \
 	$RPM_BUILD_ROOT/home/httpd/html/%{name}/images \
 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb \
 	$RPM_BUILD_ROOT%{_sysconfdir}/pam.d \
-	$RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d \
 	$RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d \
 	$RPM_BUILD_ROOT%{_mandir}/man8 \
 	$RPM_BUILD_ROOT/var/log/radacct \
