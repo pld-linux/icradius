@@ -12,9 +12,15 @@
 
 case "$1" in
   start)
-	show Starting RADIUSD server
-	daemon radiusd -y
-	touch /var/lock/subsys/radiusd
+   # Check if the service is already running?
+   if [ ! -f /var/lock/subsys/radiusd ]; then
+      show Starting RADIUSD server
+      daemon radiusd -y
+      touch /var/lock/subsys/radiusd
+   else
+      msg_Already_Running radiusd
+      exit 1
+   fi
 	;;
   stop)
 	show Stopping RADIUSD server
