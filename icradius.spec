@@ -45,7 +45,8 @@ Summary(pl):	Interfejs WWW do ICRADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 Requires:	%{name}-perl = %{version}
-Requires:	httpd
+Requires:	perl-IC-Radius
+Requires:	webserver
 
 %description cgi
 ICRADIUS web interface.
