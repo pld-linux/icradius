@@ -133,12 +133,6 @@ install %{SOURCE4}	doc/QUICKSTART.txt
 install %{SOURCE5}	$RPM_BUILD_ROOT/%{perl_sitearch}/ICRadiusCFG.pm
 
 install doc/*.8		$RPM_BUILD_ROOT%{_mandir}/man8
-gzip -9nf scripts/{README,deloldsess.sh,radiusd.cron.daily} \
-	scripts/{radiusd.cron.monthly,rc.radiusd,usonlineconv.pl} \
-	{COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston} \
-	doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO} \
-	doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul} \
-	doc/QUICKSTART.txt
 
 gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
 
@@ -171,11 +165,11 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc {COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston}.gz
-%doc doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO}.gz
-%doc doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul}.gz
-%doc scripts/*.gz
-%doc doc/QUICKSTART.txt.gz
+%doc COPYING COPYRIGHT.Cistron COPYRIGHT.ICRADIUS COPYRIGHT.Livingston
+%doc doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO}
+%doc doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul}
+%doc scripts/*
+%doc doc/QUICKSTART.txt
 
 %attr(750,root,root) %dir /var/log/radacct
 %attr(751,root,root) %dir %{_sysconfdir}/raddb
