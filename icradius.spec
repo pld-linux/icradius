@@ -94,9 +94,9 @@ install -d \
 	$RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries \
 	$RPM_BUILD_ROOT/home/services/httpd/html/%{name}/images \
 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb \
-	$RPM_BUILD_ROOT%{_sysconfdir}/pam.d \
+	$RPM_BUILD_ROOT/etc/pam.d \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d \
-	$RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d \
+	$RPM_BUILD_ROOT/etc/logrotate.d \
 	$RPM_BUILD_ROOT%{_mandir}/man8 \
 	$RPM_BUILD_ROOT/var/log/radacct \
 	$RPM_BUILD_ROOT%{perl_sitearch}
