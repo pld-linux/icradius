@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	7
+Release:	8
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
