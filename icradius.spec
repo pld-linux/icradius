@@ -3,7 +3,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	5
+Release:	6
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -18,6 +18,7 @@ Source6:	%{name}-dictionary.cisco
 Source7:	%{name}-dictionary.default
 Patch0:		%{name}-radius_dir.patch
 Patch1:		%{name}-ICRadiusCFG.patch
+Patch2:		%{name}-Cisco-VOIP.patch
 URL:		http://radius.innercite.com/
 Requires:	perl-Authen-Radius >= 0.05
 Requires:	perl >= 5.6.0
@@ -52,7 +53,6 @@ Requires:	perl
 Requires:	perl-Msql-Mysql-modules
 Requires:	perl-Authen-Radius >= 0.05
 BuildRequires:	rpm-perlprov
-%include        /usr/lib/rpm/macros.perl
 
 %description perl
 ICRADIUS perl scripts
@@ -71,6 +71,7 @@ RADIUS dictionaries.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 cd src
