@@ -6,7 +6,7 @@ Version:	0.18.1
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	ftp://ftp.innercite.com/pub/icradius/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/icradius/%{name}-%{version}.tar.gz
 # Source0-md5:	55585fd9947d40ab3243deb4f7738770
 Source1:	%{name}.pamd
 Source2:	%{name}.init
@@ -17,7 +17,7 @@ Source6:	%{name}-dictionary.cisco
 Source7:	%{name}-dictionary.default
 Patch0:		%{name}-ICRadiusCFG.patch
 Patch1:		%{name}-Cisco-VOIP.patch
-URL:		http://radius.innercite.com/
+URL:		http://www.icradius.org/
 BuildRequires:	mysql-devel
 BuildRequires:	pam-devel
 BuildRequires:	rpm-perlprov >= 4.1-13
