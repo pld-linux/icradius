@@ -2,7 +2,7 @@ Summary:	RADIUS Server
 Summary(pl):	Serwer RADIUS
 Name:		icradius
 Version:	0.17b
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
@@ -13,6 +13,7 @@ Source2:	%{name}.initd
 Source3:	%{name}.logrotate
 Source4:	%{name}.QUICKSTART.txt
 Source5:	%{name}-ICRadiusCFG.pm
+Source6:	%{name}-dictionary.cisco
 Patch0:		%{name}-radius_dir.patch
 Patch1:		%{name}-ICRadiusCFG.patch
 URL:		http://radius.innercite.com/
@@ -54,6 +55,16 @@ BuildRequires:	rpm-perlprov
 %description perl
 ICRADIUS perl scripts
 
+%package dictionaries
+Summary:	RADIUS dictonaries
+Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
+Group(pl):	Sieciowe/Serwery
+Requires:	%{name} = %{version}
+
+%description dictionaries
+RADIUS dictonaries
+
 %prep
 %setup -q
 %patch0 -p1
@@ -70,7 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d \
 	$RPM_BUILD_ROOT%{_sbindir} \
 	$RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} \
-	$RPM_BUILD_ROOT%{_datadir}/%{name} \
+	$RPM_BUILD_ROOT%{_datadir}/%{name}/dictionaries \
 	$RPM_BUILD_ROOT/home/httpd/html/%{name}/images \
 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb \
 	$RPM_BUILD_ROOT%{_sysconfdir}/pam.d \
@@ -90,6 +101,11 @@ install src/checkrad.pl \
 			scripts/{userimport.pl,syncaccounting.pl} \
 			$RPM_BUILD_ROOT/%{_datadir}/%{name}
 
+#dictionaries
+install raddb/dictionary.* \
+			${SOURCE6} \
+			$RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries
+
 #cgi
 install scripts/images/* \
 	$RPM_BUILD_ROOT/home/httpd/html/%{name}/images
@@ -97,7 +113,7 @@ install scripts/{radius.cgi,usage.cgi} \
 	$RPM_BUILD_ROOT/home/httpd/html/%{name}
 
 #etc
-install raddb/* 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
+install raddb/radius.conf 	$RPM_BUILD_ROOT%{_sysconfdir}/raddb
 install %{SOURCE1}	$RPM_BUILD_ROOT/%{_sysconfdir}/pam.d/radius
 install %{SOURCE2}	$RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/radius
 install %{SOURCE3}	$RPM_BUILD_ROOT/%{_sysconfdir}/logrotate.d/radius
@@ -111,6 +127,8 @@ gzip -9nf {COPYING,COPYRIGHT.Cistron,COPYRIGHT.ICRADIUS,COPYRIGHT.Livingston} \
 	doc/{ChangeLog,ChangeLog.cistron,FAQ,THANKS,TODO} \
 	doc/{README,README.Y2K,README.cisco,README.hints,README.proxy,README.simul} \
 	doc/QUICKSTART.txt
+
+gzip -9nf $RPM_BUILD_ROOT/%{_datadir}/%{name}/dictionaries/*
 
 :> $RPM_BUILD_ROOT/var/log/radutmp
 :> $RPM_BUILD_ROOT/var/log/radwtmp
@@ -146,9 +164,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc doc/QUICKSTART.txt.gz
 
 %attr(750,root,root) %dir /var/log/radacct
-%attr(750,root,root) %dir %{_sysconfdir}/raddb
+%attr(751,root,root) %dir %{_sysconfdir}/raddb
 
-%attr(640,root,root) %config %verify(not size mtime md5) %{_sysconfdir}/raddb/*
+%attr(644,root,root) %config %verify(not size mtime md5) %{_sysconfdir}/raddb/*
 
 %attr(755,root,root) %{_sbindir}/radiusd
 %attr(755,root,root) %{_sbindir}/radwatch
@@ -173,3 +191,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/testrad
 %attr(755,root,root) %{_datadir}/%{name}/*.pl
 %{perl_sitearch}/ICRadiusCFG.pm
+
+%files dictionaries
+%defattr(644,root,root,755)
+%attr(644,root,root) %{_datadir}/%{name}/dictionaries/*
