@@ -2,7 +2,7 @@
 #
 # radiusd	Start/Stop Radius daemon.
 #
-# chkconfig: 345 98 10
+# chkconfig:	345 98 10
 #
 # description:	Remote Authentication Dail In User Service
 #
@@ -12,35 +12,42 @@
 
 case "$1" in
   start)
-   # Check if the service is already running?
-   if [ ! -f /var/lock/subsys/radiusd ]; then
-      msg_starting ICRADIUS
-      daemon radiusd -y
-      touch /var/lock/subsys/radiusd
-   else
-      msg_Already_Running radiusd
-      exit 1
-   fi
-	;;
-  status)
-      	if [ -f /var/lock/subsys/radiusd ]; then
-		echo ICRADIUS is working on pids `pidof radiusd`
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/radiusd ]; then
+		msg_starting ICRADIUS
+		daemon radiusd -y
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/radiusd
 	else
-		echo /var/lock/subsys/radiusd does not exist
+		msg_already_running radiusd
+		exit 1
 	fi
 	;;
-  stop)
-	msg_stopping ICRADIUS
-	killproc radiusd
-	rm -f /var/lock/subsys/radiusd
+  status)
+	status radiusd
+	# if [ -f /var/lock/subsys/radiusd ]; then
+	# 	echo ICRADIUS is working on pids `pidof radiusd`
+	# else
+	# 	echo /var/lock/subsys/radiusd does not exist
+	# fi
 	;;
-  restart)
+  stop)
+	if [ -f /var/lock/subsys/radiusd ]; then
+		msg_stopping ICRADIUS
+		killproc radiusd
+		rm -f /var/lock/subsys/radiusd
+	else
+		msg_not_running radiusd
+		exit 1
+	fi
+	;;
+  restart|reload)
 	$0 stop
 	$0 start
 	;;
   *)
-        echo "Usage: $0 {start|status|stop|restart}"
-        exit 1
+	msg_usage "$0 {start|stop|restart|reload|status}"
+	exit 1
 esac
 
-exit 0
+exit $RETVAL
