@@ -7,6 +7,7 @@ Release:	9
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.innercite.com/pub/icradius/old/%{name}-%{version}.tar.gz
+# Source0-md5:	ff8eef808dbc601ea120617b787af26b
 Source1:	%{name}.pamd
 Source2:	%{name}.init
 Source3:	%{name}.logrotate
