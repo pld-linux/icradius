@@ -23,10 +23,10 @@ BuildRequires:	pam-devel
 BuildRequires:	rpm-perlprov >= 4.1-13
 Requires(post):	fileutils
 Requires(post,preun):	/sbin/chkconfig
-Requires:	perl-Authen-Radius >= 0.05
-Requires:	perl-base >= 5.6.0
 Requires:	mysql
 Requires:	pam >= 0.77.3
+Requires:	perl-Authen-Radius >= 0.05
+Requires:	perl-base >= 5.6.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	radius
 Obsoletes:	radius
@@ -59,8 +59,8 @@ Summary:	ICRADIUS perl scripts
 Summary(pl):	Skrypty perlowe ICRADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	perl-Msql-Mysql-modules
 Requires:	perl-Authen-Radius >= 0.05
+Requires:	perl-Msql-Mysql-modules
 
 %description perl
 ICRADIUS perl scripts.
@@ -179,7 +179,7 @@ fi
 
 %attr(750,root,root) %dir /var/log/radacct
 %attr(751,root,root) %dir %{_sysconfdir}/raddb
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/raddb/*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/raddb/*
 
 %attr(755,root,root) %{_sbindir}/radiusd
 %attr(755,root,root) %{_sbindir}/radwatch
@@ -188,13 +188,13 @@ fi
 %{_datadir}/%{name}/radius.db
 
 %attr(754,root,root) /etc/rc.d/init.d/radius
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/radius
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/radius
 
 %attr(640,root,root) %ghost /var/log/radutmp
 %attr(640,root,root) %ghost /var/log/radwtmp
 %attr(640,root,root) %ghost /var/log/radius.log
 
-%config(noreplace) %verify(not size mtime md5) /etc/pam.d/radius
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/radius
 
 %files cgi
 %defattr(644,root,root,755)
