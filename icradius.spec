@@ -1,6 +1,6 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	RADIUS Server
-Summary(pl.UTF-8):   Serwer RADIUS
+Summary(pl.UTF-8):	Serwer RADIUS
 Name:		icradius
 Version:	0.18.1
 Release:	6
@@ -41,7 +41,7 @@ Serwer RADIUS z backendem MySQL bazowanym na Cistron Radius.
 
 %package cgi
 Summary:	ICRADIUS web interface
-Summary(pl.UTF-8):   Interfejs WWW do ICRADIUS
+Summary(pl.UTF-8):	Interfejs WWW do ICRADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-perl = %{version}-%{release}
@@ -56,7 +56,7 @@ Interfejs WWW do ICRADIUS.
 
 %package perl
 Summary:	ICRADIUS perl scripts
-Summary(pl.UTF-8):   Skrypty perlowe ICRADIUS
+Summary(pl.UTF-8):	Skrypty perlowe ICRADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	perl-Authen-Radius >= 0.05
@@ -70,7 +70,7 @@ Skrypty perlowe ICRADIUS.
 
 %package dictionaries
 Summary:	RADIUS dictionaries
-Summary(pl.UTF-8):   Słowniki RADIUS
+Summary(pl.UTF-8):	Słowniki RADIUS
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 
