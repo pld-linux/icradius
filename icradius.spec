@@ -5,7 +5,7 @@ Name:		icradius
 Version:	0.18.1
 Release:	6
 License:	GPL
-Group:		Networking/Daemons
+Group:		Networking/Daemons/Radius
 Source0:	http://dl.sourceforge.net/icradius/%{name}-%{version}.tar.gz
 # Source0-md5:	55585fd9947d40ab3243deb4f7738770
 Source1:	%{name}.pamd
@@ -42,7 +42,7 @@ Serwer RADIUS z backendem MySQL bazowanym na Cistron Radius.
 %package cgi
 Summary:	ICRADIUS web interface
 Summary(pl.UTF-8):	Interfejs WWW do ICRADIUS
-Group:		Networking/Daemons
+Group:		Networking/Daemons/Radius
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-perl = %{version}-%{release}
 Requires:	perl-IC-Radius
@@ -57,7 +57,7 @@ Interfejs WWW do ICRADIUS.
 %package perl
 Summary:	ICRADIUS perl scripts
 Summary(pl.UTF-8):	Skrypty perlowe ICRADIUS
-Group:		Networking/Daemons
+Group:		Networking/Daemons/Radius
 Requires:	%{name} = %{version}-%{release}
 Requires:	perl-Authen-Radius >= 0.05
 Requires:	perl-Msql-Mysql-modules
@@ -71,7 +71,7 @@ Skrypty perlowe ICRADIUS.
 %package dictionaries
 Summary:	RADIUS dictionaries
 Summary(pl.UTF-8):	Słowniki RADIUS
-Group:		Networking/Daemons
+Group:		Networking/Daemons/Radius
 Requires:	%{name} = %{version}-%{release}
 
 %description dictionaries
