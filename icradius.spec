@@ -1,4 +1,3 @@
-%include	/usr/lib/rpm/macros.perl
 Summary:	RADIUS Server
 Summary(pl.UTF-8):	Serwer RADIUS
 Name:		icradius
